@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:orientation="vertical">
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/editText2"
+            android:hint="输入汉字"
+            android:inputType="text"
+            android:layout_margin="16dp"
+            android:imeOptions="actionDone"
+            android:drawableStart="@mipmap/ic_search"
+            android:drawableEnd="@mipmap/ic_delete"
+            />
+    <WebView
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/hanziWebView"
+        android:layout_width="@dimen/hanzi_webview_width"
+        android:layout_height="@dimen/hanzi_webview_height" />
+
+    <!--
+        笔画拆解：N 笔就横排 N 个田字格，第 k 格画到第 k 笔，最后一格即整字。
+        笔画数据不在本地时整行隐藏（与笔顺动画失败是同一个原因）。
+    -->
+    <HorizontalScrollView
+        android:id="@+id/strokeBreakdownScroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:scrollbars="none"
+        android:visibility="gone">
+
+        <com.example.myskills.ui.view.StrokeBreakdownView
+            android:id="@+id/strokeBreakdown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </HorizontalScrollView>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <Button
+            android:id="@+id/btnAnimate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="动画" />
+
+        <Button
+            android:id="@+id/btnLoop"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="循环" />
+
+        <Button
+            android:id="@+id/btnStop"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="停止" />
+
+        <Button
+            android:id="@+id/btnQuiz"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="测验" />
+
+    </LinearLayout>
+        <!--
+        字典信息面板。
+        高度用 weight 而不是 wrap_content：释义正文最长可达 590 字，
+        wrap_content 会把上面的 WebView 压扁甚至挤出屏幕。
+    -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/dictScroll"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:minHeight="120dp"
+        android:background="#F7F7F7"
+        android:padding="12dp"
+        android:scrollbars="vertical"
+        android:fillViewport="true">
+
+        <TextView
+            android:id="@+id/tvDictInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="#333333"
+            android:lineSpacingExtra="2dp"
+            android:textIsSelectable="true"
+            android:text="初始化中…" />
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>

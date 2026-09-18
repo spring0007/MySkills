@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-   Sample data extraction rules file; uncomment and customize as necessary.
-   See https://developer.android.com/about/versions/12/backup-restore#xml-changes
-   for details.
+   备份 / 设备迁移规则，API 31 及以上由本文件生效。
+   低于 31 的设备见 backup_rules.xml —— 两个文件都要改，漏一个等于没排除。
+   https://developer.android.com/about/versions/12/backup-restore#xml-changes
 -->
 <data-extraction-rules>
     <cloud-backup>
-        <!-- TODO: Use <include> and <exclude> to control what is backed up.
-        <include .../>
-        <exclude .../>
+        <!--
+            新华字典数据库，文件名见 AssetDbInstaller.DB_NAME。
+            它有 24MB，是对 25MB 云备份配额的挤压，还会连带影响其他数据的备份；
+            而它随 APK 发布、随时可以重新释放，排除掉没有任何损失。
         -->
+        <exclude domain="database" path="xinhuazidian_v1.db" />
     </cloud-backup>
-    <!--
     <device-transfer>
-        <include .../>
-        <exclude .../>
+        <!-- 换机时同样跳过，避免几万毫秒的传输耗时 -->
+        <exclude domain="database" path="xinhuazidian_v1.db" />
     </device-transfer>
-    -->
 </data-extraction-rules>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="hanzi_webview_width">200dp</dimen>
+    <dimen name="hanzi_webview_height">200dp</dimen>
+
+    <!-- 笔画拆解：单个田字格边长 / 格间距 / 格子内留白 -->
+    <dimen name="stroke_cell_size">52dp</dimen>
+    <dimen name="stroke_cell_gap">6dp</dimen>
+    <dimen name="stroke_grid_padding">4dp</dimen>
+</resources>

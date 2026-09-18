@@ -11,6 +11,8 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
+import com.example.myskills.fragments.HanziWriterFragment;
+import com.example.myskills.fragments.HanziWriterFragment2;
 import com.example.myskills.fragments.HomeFragment;
 import com.example.myskills.fragments.ProfileFragment;
 import com.example.myskills.fragments.SettingsFragment;
@@ -80,6 +82,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             showFragment(new ProfileFragment());
         } else if (id == R.id.nav_settings) {
             showFragment(new SettingsFragment());
+        }else if (id == R.id.nav_hanzi_writer) {
+            showFragment(new HanziWriterFragment());
+        }else if (id == R.id.nav_hanzi_writer2) {
+            showFragment(new HanziWriterFragment2());
         }
         // 选择后关闭抽屉
         drawerLayout.closeDrawer(GravityCompat.START);

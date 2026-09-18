@@ -14,6 +14,14 @@
             android:id="@+id/nav_settings"
             android:icon="@android:drawable/ic_menu_preferences"
             android:title="@string/nav_settings" />
+        <item
+            android:id="@+id/nav_hanzi_writer"
+            android:icon="@mipmap/ic_menu_write"
+            android:title="@string/nav_hanzi_writer" />
+        <item
+            android:id="@+id/nav_hanzi_writer2"
+            android:icon="@mipmap/ic_menu_write2"
+            android:title="@string/nav_hanzi_writer" />
     </group>
 
 </menu>

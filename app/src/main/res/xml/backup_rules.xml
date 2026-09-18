@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-   Sample backup rules file; uncomment and customize as necessary.
-   See https://developer.android.com/guide/topics/data/autobackup
-   for details.
-   Note: This file is ignored for devices older than API 31
-   See https://developer.android.com/about/versions/12/backup-restore
+   自动备份规则，仅对 API 31 以下的设备生效；
+   31 及以上走 data_extraction_rules.xml，两个文件都要改。
+   https://developer.android.com/guide/topics/data/autobackup
 -->
 <full-backup-content>
-    <!--
-   <include domain="sharedpref" path="."/>
-   <exclude domain="sharedpref" path="device.xml"/>
--->
+    <!-- 新华字典数据库（文件名见 AssetDbInstaller.DB_NAME）：24MB，可重新释放，不占备份配额 -->
+    <exclude domain="database" path="xinhuazidian_v1.db" />
 </full-backup-content>

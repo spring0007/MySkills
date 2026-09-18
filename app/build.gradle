@@ -35,7 +35,11 @@ dependencies {
     implementation libs.androidx.appcompat
     implementation libs.androidx.fragment
     implementation libs.google.material
+    implementation libs.okhttp
     testImplementation libs.junit
     androidTestImplementation libs.androidx.junit
+    androidTestImplementation libs.androidx.test.core
     androidTestImplementation libs.androidx.espresso.core
+    //han zi
+    implementation 'com.bihe0832.android:lib-pinyin:8.6.10'
 }

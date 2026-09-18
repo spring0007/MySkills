@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">技能树</string>
+    <string name="nav_home">首頁數字</string>
+    <string name="nav_profile">個人中心數字</string>
+    <string name="nav_settings">設定數字</string>
+    <string name="nav_open">打開導航抽屜數字</string>
+    <string name="nav_close">關閉導航抽屜數字</string>
+</resources>

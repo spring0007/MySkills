@@ -1,8 +1,9 @@
 <resources>
-    <string name="app_name">MySkills</string>
+    <string name="app_name">SkillTrees</string>
     <string name="nav_home">首页</string>
     <string name="nav_profile">个人中心</string>
     <string name="nav_settings">设置</string>
     <string name="nav_open">打开导航抽屉</string>
     <string name="nav_close">关闭导航抽屉</string>
+    <string name="nav_hanzi_writer">笔顺笔画</string>
 </resources>

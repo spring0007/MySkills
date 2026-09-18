@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Hanzi Writer</title>
+    <style>
+        * { margin: 0; padding: 0; }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: transparent;
+            overflow: hidden;
+        }
+        #target {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="target"></div>
+
+    <!-- 引入 Hanzi Writer -->
+    <script src="hanzi-writer.min.js"></script>
+
+    <script>
+        var writer = null;
+        var currentChar = '';
+        var isReady = false;
+
+        // 已加载字符数据的内存缓存：char -> data
+        var charDataCache = {};
+
+        /**
+         * 加载汉字笔画数据
+         * 数据职责完全由 Android 端承担：通过 androidInterface.getCharData 同步读取
+         * assets 内置 / 应用缓存目录中的 JSON；JS 侧不发起任何文件或网络请求
+         */
+        function loadCharData(char) {
+            return new Promise(function(resolve, reject) {
+                if (charDataCache[char]) {
+                    resolve(charDataCache[char]);
+                    return;
+                }
+                if (window.androidInterface && window.androidInterface.getCharData) {
+                    try {
+                        var json = window.androidInterface.getCharData(char);
+                        if (json) {
+                            var data = JSON.parse(json);
+                            charDataCache[char] = data;
+                            resolve(data);
+                            return;
+                        }
+                    } catch (e) {
+                        console.warn('Android getCharData failed for ' + char + ': ' + e.message);
+                    }
+                }
+                reject(new Error('Failed to load data for ' + char));
+            });
+        }
+
+        /**
+         * 初始化 Hanzi Writer（v3 API）
+         * 注意：hanzi-writer v3 的构造函数签名为 (element, options)，
+         * 字符必须通过 HanziWriter.create(element, character, options) 设置
+         * 由 Android 端调用
+         */
+        function initWriter(char, width, height, padding, options) {
+            currentChar = char;
+            isReady = false;
+
+            // 默认配置
+            var config = {
+                width: width || 300,
+                height: height || 300,
+                padding: padding || 20,
+                showOutline: true,
+                showCharacter: true,
+                strokeColor: '#555555',
+                radicalColor: '#168F16',
+                outlineColor: '#DDDDDD',
+                // 自定义数据加载器 - 数据由 Android 端提供
+                charDataLoader: function(c) {
+                    return loadCharData(c);
+                },
+                // 数据加载成功后才算真正就绪
+                onLoadCharDataSuccess: function() {
+                    isReady = true;
+                    console.log('Hanzi Writer ready for: ' + currentChar);
+                    if (window.onWriterReady) {
+                        window.onWriterReady(currentChar);
+                    }
+                },
+                onLoadCharDataError: function(err) {
+                    isReady = false;
+                    console.warn('Hanzi data load failed: ' + (err && err.message ? err.message : err));
+                    if (window.onWriterError) {
+                        window.onWriterError(err && err.message ? err.message : String(err));
+                    }
+                }
+            };
+
+            // 合并传入的额外配置
+            if (options) {
+                Object.assign(config, options);
+            }
+
+            try {
+                // 防止重复初始化时旧 SVG 在 #target 中堆叠
+                if (writer) {
+                    document.getElementById('target').innerHTML = '';
+                    writer = null;
+                }
+                writer = HanziWriter.create('target', char, config);
+                console.log('Hanzi Writer created for: ' + char);
+            } catch (e) {
+                console.error('Init error:', e);
+                if (window.onWriterError) {
+                    window.onWriterError(e.message);
+                }
+            }
+        }
+
+        /**
+         * 播放整字动画
+         */
+        function animateCharacter(options) {
+            if (!writer || !isReady) {
+                console.warn('Writer not ready');
+                return;
+            }
+            writer.animateCharacter(options || {});
+        }
+
+        /**
+         * 循环播放动画
+         */
+        function loopCharacterAnimation(options) {
+            if (!writer || !isReady) {
+                console.warn('Writer not ready');
+                return;
+            }
+            writer.loopCharacterAnimation(options || {});
+        }
+
+        /**
+         * 停止动画（取消所有动画并回到静态显示）
+         * v3 没有直接的 stop API：对同一字符重新 setCharacter 会取消全部动画并重绘静态字
+         */
+        function stopAnimation() {
+            if (!writer || !currentChar) return;
+            writer.setCharacter(currentChar);
+        }
+
+        /**
+         * 切换汉字
+         * v3 复用同一个 writer 实例：writer.setCharacter 内部会销毁旧渲染、加载新数据，
+         * 避免重复 new 导致 SVG 在 #target 中堆叠
+         */
+        function setCharacter(char, options) {
+            if (!char) return;
+            currentChar = char;
+            if (writer) {
+                writer.setCharacter(char);
+            } else {
+                // 页面初始化尚未完成时兜底
+                initWriter(char, null, null, null, options);
+            }
+        }
+
+        /**
+         * 开始测验模式
+         */
+        function startQuiz(options) {
+            if (!writer || !isReady) {
+                console.warn('Writer not ready');
+                return;
+            }
+            writer.quiz(options || {});
+        }
+
+        /**
+         * 获取当前状态
+         */
+        function getStatus() {
+            return {
+                isReady: isReady,
+                currentChar: currentChar
+            };
+        }
+
+        // 暴露方法给 Android 端调用
+        window.initWriter = initWriter;
+        window.animateCharacter = animateCharacter;
+        window.loopCharacterAnimation = loopCharacterAnimation;
+        window.stopAnimation = stopAnimation;
+        window.setCharacter = setCharacter;
+        window.startQuiz = startQuiz;
+        window.getStatus = getStatus;
+
+        console.log('Hanzi Writer HTML loaded successfully');
+    </script>
+</body>
+</html>
